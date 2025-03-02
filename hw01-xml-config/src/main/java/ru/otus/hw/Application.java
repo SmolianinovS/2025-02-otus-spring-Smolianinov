@@ -2,16 +2,8 @@ package ru.otus.hw;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.hw.config.AppProperties;
-import ru.otus.hw.config.TestFileNameProvider;
-import ru.otus.hw.dao.CsvQuestionDao;
-import ru.otus.hw.dao.QuestionDao;
-import ru.otus.hw.service.TestRunnerService;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import ru.otus.hw.service.TestRunnerService;
 
 public class Application {
     public static void main(String[] args) {

@@ -2,7 +2,6 @@ package ru.otus.hw.dao;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import lombok.RequiredArgsConstructor;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.dao.dto.QuestionDto;
@@ -24,11 +23,9 @@ public class CsvQuestionDao implements QuestionDao {
         // Про ресурсы: https://mkyong.com/java/java-read-a-file-from-resources-folder/
 
         String fileName = fileNameProvider.getTestFileName();
-        FileReader fileReader = null;
-        List<Question> questions = List.of();
+        List<Question> questions;
 
-        try {
-            fileReader = new FileReader(fileName);
+        try (FileReader fileReader = new FileReader(fileName)) {
             CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(fileReader)
                     .withSkipLines(1)
                     .withType(QuestionDto.class)
@@ -44,15 +41,7 @@ public class CsvQuestionDao implements QuestionDao {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Ошибка при чтении файла: " + e.getMessage());
-        }
-
-        try {
-            fileReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Ошибка при закрытии файла: " + e.getMessage());
+            throw new RuntimeException("Ошибка при чтении файла: " + e.getMessage(), e);
         }
 
         return questions;

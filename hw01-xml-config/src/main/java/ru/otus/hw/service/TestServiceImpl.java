@@ -1,19 +1,16 @@
 package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.otus.hw.dao.CsvQuestionDao;
-import ru.otus.hw.dao.QuestionDao;
+import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
-
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
     private final IOService ioService;
+    private final CsvQuestionDao csvQuestionDao;
 
     @Override
     public void executeTest() {
@@ -21,17 +18,15 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("Please answer the questions below%n");
         // Получить вопросы из дао и вывести их с вариантами ответов
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
-        var csvQuestionDao = context.getBean(CsvQuestionDao.class);
-
-
         List<Question> questions = csvQuestionDao.findAll();
 
-
         for (Question question : questions) {
-            System.out.println(question.text());
+            ioService.printFormattedLine(question.text());
+            for (Answer answer : question.answers()) {
+                ioService.printFormattedLine(question.answers().indexOf(answer) + 1 + "." + answer.text());
+            }
+            ioService.printFormattedLine("");
         }
-
 
     }
 }
