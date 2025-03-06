@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.dao.dto.QuestionDto;
 import ru.otus.hw.domain.Question;
+import ru.otus.hw.exceptions.QuestionReadException;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,16 +20,16 @@ public class CsvQuestionDao implements QuestionDao {
 
     @Override
     public List<Question> findAll() {
-        // Использовать CsvToBean
-        // https://opencsv.sourceforge.net/#collection_based_bean_fields_one_to_many_mappings
-        // Использовать QuestionReadException
-        // Про ресурсы: https://mkyong.com/java/java-read-a-file-from-resources-folder/
-
         String fileName = fileNameProvider.getTestFileName();
         List<Question> questions;
 
-        try (FileReader fileReader = new FileReader(fileName)) {
-            CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(fileReader)
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new QuestionReadException("Ресурс не найден: " + fileName);
+        }
+
+        try (Reader reader = new InputStreamReader(inputStream)) {
+            CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
                     .withSkipLines(1)
                     .withType(QuestionDto.class)
                     .withIgnoreLeadingWhiteSpace(true)
@@ -40,11 +43,10 @@ public class CsvQuestionDao implements QuestionDao {
                 questions.add(dto.toDomainObject());
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка при чтении файла: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new QuestionReadException("Ошибка при чтении CSV из ресурса: " + fileName, e);
         }
 
         return questions;
     }
 }
-

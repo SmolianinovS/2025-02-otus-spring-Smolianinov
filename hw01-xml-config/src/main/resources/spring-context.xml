@@ -29,7 +29,7 @@
 
     <bean id="testFileNameProvider" class="ru.otus.hw.config.AppProperties">
         <constructor-arg
-                value="C:\\OTUS\\java\\spring\\homeworks\\2025-02-otus-spring-Smolianinov\\hw01-xml-config\\src\\main\\resources\\questions.csv"/>
+                value="questions.csv"/>
     </bean>
 
 

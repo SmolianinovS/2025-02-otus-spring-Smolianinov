@@ -20,10 +20,13 @@ public class TestServiceImpl implements TestService {
 
         List<Question> questions = csvQuestionDao.findAll();
 
+
         for (Question question : questions) {
+            Integer numOfAnswer = 0;
             ioService.printFormattedLine(question.text());
             for (Answer answer : question.answers()) {
-                ioService.printFormattedLine(question.answers().indexOf(answer) + 1 + "." + answer.text());
+                numOfAnswer++;
+                ioService.printFormattedLine(numOfAnswer + "." + answer.text());
             }
             ioService.printFormattedLine("");
         }
